@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АвтоМастер - Запчасти для вашего автомобиля</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🔧</span>
+                <span class="logo-text">АвтоМастер</span>
+            </div>
+            <nav class="nav">
+                <a href="#catalog">Каталог</a>
+                <a href="#brands">Бренды</a>
+                <a href="#delivery">Доставка</a>
+                <a href="#reviews">Отзывы</a>
+                <a href="#contacts">Контакты</a>
+            </nav>
+            <div class="header-right">
+                <div class="header-phone">
+                    <span class="phone-icon">📞</span>
+                    <span>+7 (800) 555-35-35</span>
+                </div>
+                <button class="btn-cart-header" onclick="openCart()">
+                    🛒 <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <div class="auth-buttons">
+                    <button class="btn-login" onclick="openModal()">Вход</button>
+                    <button class="btn-register" onclick="openRegisterModal()">Регистрация</button>
+                    <div class="user-menu" id="userMenu" style="display:none;">
+                        <button class="btn-admin-panel" id="btnAdminPanel" style="display:none;" onclick="openAdminPanel()">⚙️ Админ панель</button>
+                        <button class="btn-orders" onclick="openOrdersModal()">📦 Мои заказы</button>
+                        <span class="user-name" id="userName"></span>
+                        <button class="btn-logout" onclick="logout()">Выход</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2>Вход в аккаунт</h2>
+            <div class="form-error" id="loginError"></div>
+            <form id="loginForm" onsubmit="login(event)">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Пароль" required minlength="6">
+                <button type="submit" class="btn-submit">Войти</button>
+            </form>
+            <p class="form-switch">Нет аккаунта? <a href="#" onclick="switchToRegister(event)">Зарегистрироваться</a></p>
+            <p class="form-hint">Админ: admin@avtomaster.ru / admin123</p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Регистрация</h2>
+            <div class="form-error" id="registerError"></div>
+            <form id="registerForm" onsubmit="register(event)">
+                <input type="text" id="regName" placeholder="Имя" required minlength="2">
+                <input type="tel" id="regPhone" placeholder="+7 (___) ___-__-__" required maxlength="18" oninput="phoneMask(this)">
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="password" id="regPassword" placeholder="Пароль" required minlength="6">
+                <input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" required minlength="6">
+                <button type="submit" class="btn-submit">Зарегистрироваться</button>
+            </form>
+            <p class="form-switch">Уже есть аккаунт? <a href="#" onclick="switchToLogin(event)">Войти</a></p>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content modal-cart">
+            <span class="modal-close" onclick="closeCart()">&times;</span>
+            <h2>🛒 Корзина</h2>
+            <div id="cartContent">
+                <div class="cart-auth" id="cartAuth">
+                    <div class="cart-auth-icon">🔒</div>
+                    <h3>Войдите в аккаунт</h3>
+                    <p>Чтобы добавлять товары в корзину и оформлять заказы</p>
+                    <div class="cart-auth-btns">
+                        <button class="btn-submit" onclick="closeCart(); openModal();">Вход</button>
+                        <button class="btn-submit btn-register-modal" onclick="closeCart(); openRegisterModal();">Регистрация</button>
+                    </div>
+                </div>
+                <div class="cart-auth" id="cartEmpty" style="display:none;">
+                    <div class="cart-auth-icon">🛒</div>
+                    <h3>Корзина пуста</h3>
+                    <p>Добавьте товары из каталога</p>
+                </div>
+                <div id="cartItemsList" style="display:none;">
+                    <div class="cart-items" id="cartItems"></div>
+                    <div class="cart-footer" id="cartFooter">
+                        <div class="cart-delivery">
+                            <label for="deliveryAddress">Куда доставить:</label>
+                            <input type="text" id="deliveryAddress" placeholder="Город, улица, дом, квартира">
+                        </div>
+                        <div class="cart-total">
+                            <span>Итого:</span>
+                            <span class="total-price" id="totalPrice">0 ₽</span>
+                        </div>
+                        <button class="btn-checkout" onclick="checkout()">Оформить заказ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content modal-success">
+            <div class="success-icon">✅</div>
+            <h2>Заказ оформлен!</h2>
+            <p class="success-text">Спасибо за покупку. Ваш заказ принят в обработку.</p>
+            <div class="success-details" id="successDetails"></div>
+            <p class="success-note">Мы свяжемся с вами в ближайшее время для подтверждения.</p>
+            <button class="btn-submit" onclick="closeSuccess()">Отлично</button>
+        </div>
+    </div>
+
+    <div class="modal" id="confirmModal">
+        <div class="modal-content modal-confirm">
+            <div class="confirm-icon">⚠️</div>
+            <h2 id="confirmTitle">Подтверждение</h2>
+            <p id="confirmText"></p>
+            <div class="confirm-btns">
+                <button class="btn-confirm-ok" id="confirmOkBtn">Удалить</button>
+                <button class="btn-confirm-cancel" onclick="closeConfirmModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="ordersModal">
+        <div class="modal-content modal-orders">
+            <span class="modal-close" onclick="closeOrdersModal()">&times;</span>
+            <h2>📦 Мои заказы</h2>
+            <div id="ordersList" class="orders-list"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="adminPanelModal">
+        <div class="modal-content modal-admin-panel">
+            <span class="modal-close" onclick="closeAdminPanel()">&times;</span>
+            <h2>⚙️ Админ панель</h2>
+            <div class="admin-panel-stats">
+                <div class="admin-stat-card" onclick="closeAdminPanel(); document.getElementById('catalog').scrollIntoView({behavior:'smooth'});">
+                    <div class="admin-stat-icon">📦</div>
+                    <div class="admin-stat-info">
+                        <span class="admin-stat-num" id="adminStatProducts">0</span>
+                        <span class="admin-stat-label">Товаров</span>
+                    </div>
+                </div>
+                <div class="admin-stat-card" onclick="closeAdminPanel(); document.getElementById('reviews').scrollIntoView({behavior:'smooth'});">
+                    <div class="admin-stat-icon">💬</div>
+                    <div class="admin-stat-info">
+                        <span class="admin-stat-num" id="adminStatReviews">0</span>
+                        <span class="admin-stat-label">Отзывов</span>
+                    </div>
+                </div>
+                <div class="admin-stat-card" onclick="openAdminOrders()">
+                    <div class="admin-stat-icon">🛒</div>
+                    <div class="admin-stat-info">
+                        <span class="admin-stat-num" id="adminStatOrders">0</span>
+                        <span class="admin-stat-label">Заказов</span>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-panel-actions">
+                <h3>Быстрые действия</h3>
+                <button class="admin-action-btn" onclick="closeAdminPanel(); document.getElementById('catalog').scrollIntoView({behavior:'smooth'});">➕ Добавить товар</button>
+                <button class="admin-action-btn" onclick="closeAdminPanel(); document.getElementById('reviews').scrollIntoView({behavior:'smooth'});">💬 Управление отзывами</button>
+                <button class="admin-action-btn" onclick="openAdminOrders()">📋 Просмотр заказов</button>
+                <button class="admin-action-btn" onclick="closeAdminPanel(); document.getElementById('brands').scrollIntoView({behavior:'smooth'});">🏷️ Бренды</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="adminOrdersModal">
+        <div class="modal-content modal-admin-orders">
+            <span class="modal-close" onclick="closeAdminOrders()">&times;</span>
+            <h2>📋 Все заказы</h2>
+            <div id="adminOrdersList" class="admin-orders-list"></div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Запчасти для любых автомобилей</h1>
+            <p>Более 100 000 позиций в наличии с доставкой по всей России</p>
+            <div class="hero-search">
+                <input type="text" placeholder="Поиск по артикулу или названию..." id="searchInput" onkeypress="if(event.key==='Enter')searchProducts()">
+                <button onclick="searchProducts()">Найти</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="products" id="catalog">
+        <div class="container">
+            <h2>Каталог запчастей</h2>
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterProducts('all', this)">Все</button>
+                <button class="filter-btn" onclick="filterProducts('engine', this)">Двигатель</button>
+                <button class="filter-btn" onclick="filterProducts('brakes', this)">Тормоза</button>
+                <button class="filter-btn" onclick="filterProducts('suspension', this)">Подвеска</button>
+                <button class="filter-btn" onclick="filterProducts('electric', this)">Электрика</button>
+                <button class="filter-btn" onclick="filterProducts('filters', this)">Фильтры</button>
+                <button class="filter-btn" onclick="filterProducts('body', this)">Кузов</button>
+                <button class="filter-btn" onclick="filterProducts('oil', this)">Масла и жидкости</button>
+                <select id="sortSelect" onchange="sortProducts()">
+                    <option value="default">Сортировка</option>
+                    <option value="price-asc">Цена ↑</option>
+                    <option value="price-desc">Цена ↓</option>
+                    <option value="name-asc">Название А-Я</option>
+                    <option value="name-desc">Название Я-А</option>
+                </select>
+            </div>
+            <div class="admin-product-form" id="adminProductForm" style="display:none;">
+                <h3 id="productFormTitle">Добавить товар</h3>
+                <input type="hidden" id="editProductIndex" value="-1">
+                <input type="text" id="productName" placeholder="Название товара">
+                <input type="text" id="productSku" placeholder="Артикул">
+                <input type="number" id="productPrice" placeholder="Цена (₽)" min="0">
+                <select id="productCategory">
+                    <option value="engine">Двигатель</option>
+                    <option value="brakes">Тормоза</option>
+                    <option value="suspension">Подвеска</option>
+                    <option value="electric">Электрика</option>
+                    <option value="filters">Фильтры</option>
+                    <option value="body">Кузов</option>
+                    <option value="oil">Масла и жидкости</option>
+                </select>
+                <input type="text" id="productBadge" placeholder="Бейдж (Хит / Новинка / Акция) — необязательно">
+                <input type="text" id="productEmoji" placeholder="Эмодзи товара (⚙️ / 🛞 / и т.д.)" maxlength="2">
+                <div class="form-btns">
+                    <button class="btn-submit" onclick="saveProduct()">Сохранить</button>
+                    <button class="btn-cancel" onclick="cancelProductEdit()">Отмена</button>
+                </div>
+            </div>
+            <div class="products-grid" id="productsGrid">
+            </div>
+        </div>
+    </section>
+
+    <section class="brands" id="brands">
+        <div class="container">
+            <h2>Популярные бренды</h2>
+            <div class="brands-grid">
+                <div class="brand-card" onclick="filterByBrand('Bosch')">
+                    <span class="brand-name">Bosch</span>
+                    <span class="brand-country">Германия</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('Lemforder')">
+                    <span class="brand-name">Lemforder</span>
+                    <span class="brand-country">Германия</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('Sachs')">
+                    <span class="brand-name">Sachs</span>
+                    <span class="brand-country">Германия</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('TRW')">
+                    <span class="brand-name">TRW</span>
+                    <span class="brand-country">США</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('SKF')">
+                    <span class="brand-name">SKF</span>
+                    <span class="brand-country">Швеция</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('NTN')">
+                    <span class="brand-name">NTN</span>
+                    <span class="brand-country">Япония</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('KYB')">
+                    <span class="brand-name">KYB</span>
+                    <span class="brand-country">Япония</span>
+                </div>
+                <div class="brand-card" onclick="filterByBrand('Denso')">
+                    <span class="brand-name">Denso</span>
+                    <span class="brand-country">Япония</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="delivery" id="delivery">
+        <div class="container">
+            <h2>Условия доставки</h2>
+            <div class="delivery-grid">
+                <div class="delivery-card">
+                    <div class="delivery-icon">🚚</div>
+                    <h3>Быстрая доставка</h3>
+                    <p>Доставка по Москве от 1 дня, по России от 3 дней</p>
+                </div>
+                <div class="delivery-card">
+                    <div class="delivery-icon">📦</div>
+                    <h3>Бесплатная доставка</h3>
+                    <p>При заказе от 5 000 рублей доставка бесплатная</p>
+                </div>
+                <div class="delivery-card">
+                    <div class="delivery-icon">🔄</div>
+                    <h3>Возврат и обмен</h3>
+                    <p>14 дней на возврат. Гарантия на все запчасти</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews" id="reviews">
+        <div class="container">
+            <h2>Отзывы клиентов</h2>
+            <div class="reviews-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="statRating">0.0</span>
+                    <span class="stat-label">Средняя оценка</span>
+                    <div class="stars" id="statStars">☆☆☆☆☆</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="statCount">0</span>
+                    <span class="stat-label">Отзывов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="statRecommend">0%</span>
+                    <span class="stat-label">Рекомендуют нас</span>
+                </div>
+            </div>
+            <div class="admin-review-form" id="adminReviewForm" style="display:none;">
+                <h3>Добавить отзыв (Администратор)</h3>
+                <input type="text" id="reviewName" placeholder="Имя клиента">
+                <input type="text" id="reviewProduct" placeholder="Товар (Заказ: ...)">
+                <select id="reviewStars">
+                    <option value="5">5 ★★★★★</option>
+                    <option value="4">4 ★★★★</option>
+                    <option value="3">3 ★★★</option>
+                    <option value="2">2 ★★</option>
+                    <option value="1">1 ★</option>
+                </select>
+                <textarea id="reviewText" placeholder="Текст отзыва"></textarea>
+                <button class="btn-submit" onclick="addReview()">Добавить отзыв</button>
+            </div>
+            <div class="user-review-form" id="userReviewForm" style="display:none;">
+                <h3>Оставить отзыв</h3>
+                <p class="review-form-hint">Поделитесь впечатлением о покупке</p>
+                <input type="text" id="userReviewProduct" placeholder="Какой товар вы приобрели?">
+                <select id="userReviewStars">
+                    <option value="5">5 ★★★★★</option>
+                    <option value="4">4 ★★★★</option>
+                    <option value="3">3 ★★★</option>
+                    <option value="2">2 ★★</option>
+                    <option value="1">1 ★</option>
+                </select>
+                <textarea id="userReviewText" placeholder="Напишите ваш отзыв..."></textarea>
+                <button class="btn-submit" onclick="addUserReview()">Отправить отзыв</button>
+            </div>
+            <div class="reviews-grid" id="reviewsGrid"></div>
+        </div>
+    </section>
+
+    <section class="contacts" id="contacts">
+        <div class="container">
+            <h2>Контакты</h2>
+            <div class="contacts-grid">
+                <div class="contact-item">
+                    <h3>Телефон</h3>
+                    <p>+7 (800) 555-35-35</p>
+                    <p class="contact-note">Бесплатно по России</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Режим работы</h3>
+                    <p>Пн-Пт: 9:00 - 20:00</p>
+                    <p>Сб-Вс: 10:00 - 18:00</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <p>info@avtomaster.ru</p>
+                    <p class="contact-note">Ответим в течение часа</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Адрес склада</h3>
+                    <p>Москва, ул. Автомобильная, 42</p>
+                    <p class="contact-note">Самовывоз ежедневно</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="map-section" id="map-section">
+        <div class="container">
+            <h2>Наши магазины</h2>
+            <p class="map-subtitle">АвтоМастер — сеть магазинов автозапчастей по России</p>
+            <div class="cities-grid">
+                <div class="city-card">
+                    <div class="city-badge">Главный офис</div>
+                    <h3>Москва</h3>
+                    <p class="city-address">ул. Автомобильная, д. 42</p>
+                    <p class="city-phone">+7 (495) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб-Вс: 10:00-18:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Санкт-Петербург</h3>
+                    <p class="city-address">пр. Московский, д. 118</p>
+                    <p class="city-phone">+7 (812) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб-Вс: 10:00-18:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Казань</h3>
+                    <p class="city-address">ул. Баумана, д. 46</p>
+                    <p class="city-phone">+7 (843) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб: 10:00-17:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Екатеринбург</h3>
+                    <p class="city-address">ул. Малышева, д. 32</p>
+                    <p class="city-phone">+7 (343) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб: 10:00-17:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Новосибирск</h3>
+                    <p class="city-address">Красный проспект, д. 78</p>
+                    <p class="city-phone">+7 (383) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб: 10:00-17:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Краснодар</h3>
+                    <p class="city-address">ул. Красная, д. 176</p>
+                    <p class="city-phone">+7 (861) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб: 10:00-17:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Самара</h3>
+                    <p class="city-address">ул. Ново-Садовая, д. 24</p>
+                    <p class="city-phone">+7 (846) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб: 10:00-17:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Ростов-на-Дону</h3>
+                    <p class="city-address">ул. Б. Садовая, д. 105</p>
+                    <p class="city-phone">+7 (863) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-20:00, Сб: 10:00-17:00</p>
+                </div>
+                <div class="city-card">
+                    <h3>Воронеж</h3>
+                    <p class="city-address">ул. Кольцовская, д. 51</p>
+                    <p class="city-phone">+7 (473) 555-35-35</p>
+                    <p class="city-hours">Пн-Пт: 9:00-19:00, Сб: 10:00-16:00</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Encode/decode helpers
+        function encodePass(str) { return btoa(encodeURIComponent(str)); }
+        function decodePass(str) { try { return decodeURIComponent(atob(str)); } catch(e) { return str; } }
+
+        // Users storage
+        let users;
+        try {
+            users = JSON.parse(localStorage.getItem('avtoUsers'));
+            if (users) users.forEach(u => { u.password = decodePass(u.password); });
+        } catch(e) { users = null; }
+        if (!users) {
+            users = [
+                { name: 'Администратор', email: 'admin@avtomaster.ru', password: 'admin123', isAdmin: true }
+            ];
+        }
+
+        function saveUsers() {
+            try {
+                var encoded = users.map(u => ({...u, password: encodePass(u.password)}));
+                localStorage.setItem('avtoUsers', JSON.stringify(encoded));
+            } catch(e) {}
+        }
+
+        // Auth state
+        let isLoggedIn = false;
+        let isAdmin = false;
+        let currentUser = null;
+
+        // Auto-login from saved session
+        function autoLogin() {
+            try {
+                var saved = JSON.parse(localStorage.getItem('avtoSession'));
+                if (saved && saved.email) {
+                    var user = users.find(u => u.email === saved.email);
+                    if (user) {
+                        isLoggedIn = true;
+                        isAdmin = user.isAdmin || false;
+                        currentUser = user;
+                        document.getElementById('userName').textContent = user.name;
+                        document.querySelector('.auth-buttons').querySelectorAll('.btn-login, .btn-register').forEach(b => b.style.display = 'none');
+                        document.getElementById('userMenu').style.display = 'flex';
+                        renderReviews();
+                        return;
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function saveSession(email) {
+            try { localStorage.setItem('avtoSession', JSON.stringify({email})); } catch(e) {}
+        }
+
+        function clearSession() {
+            try { localStorage.removeItem('avtoSession'); } catch(e) {}
+        }
+
+        // Modal controls
+        function openModal() {
+            var m = document.getElementById('loginModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('loginForm').reset();
+        }
+
+        function closeModal() {
+            var m = document.getElementById('loginModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function openRegisterModal() {
+            var m = document.getElementById('registerModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerForm').reset();
+        }
+
+        function closeRegisterModal() {
+            var m = document.getElementById('registerModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function switchToRegister(e) {
+            e.preventDefault();
+            closeModal();
+            setTimeout(() => openRegisterModal(), 320);
+        }
+
+        function switchToLogin(e) {
+            e.preventDefault();
+            closeRegisterModal();
+            setTimeout(() => openModal(), 320);
+        }
+
+        function phoneMask(input) {
+            var x = input.value.replace(/\D/g, '').substring(0, 11);
+            var code = x.substring(0, 1);
+            var rest = x.substring(1);
+            var formatted = '';
+            if (code === '7' || code === '8') {
+                formatted = '+7';
+                if (rest.length > 0) formatted += ' (' + rest.substring(0, 3);
+                if (rest.length >= 3) formatted += ') ' + rest.substring(3, 6);
+                if (rest.length >= 6) formatted += '-' + rest.substring(6, 8);
+                if (rest.length >= 8) formatted += '-' + rest.substring(8, 10);
+            } else {
+                formatted = x;
+            }
+            input.value = formatted;
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).textContent = message;
+        }
+
+        function applyAuth(user) {
+            isLoggedIn = true;
+            isAdmin = user.isAdmin || false;
+            currentUser = user;
+            document.getElementById('userName').textContent = user.name;
+            document.querySelector('.auth-buttons').querySelectorAll('.btn-login, .btn-register').forEach(b => b.style.display = 'none');
+            document.getElementById('userMenu').style.display = 'flex';
+            document.getElementById('btnAdminPanel').style.display = isAdmin ? 'inline-block' : 'none';
+            saveSession(user.email);
+            renderReviews();
+            renderProducts();
+        }
+
+        function login(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+
+            if (!email || !pass) {
+                showError('loginError', 'Заполните все поля');
+                return;
+            }
+
+            const user = users.find(u => u.email === email && u.password === pass);
+            if (!user) {
+                showError('loginError', 'Неверный email или пароль');
+                return;
+            }
+
+            applyAuth(user);
+            closeModal();
+        }
+
+        function register(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPassword').value;
+            const passConfirm = document.getElementById('regPasswordConfirm').value;
+
+            if (!name || !phone || !email || !pass || !passConfirm) {
+                showError('registerError', 'Заполните все поля');
+                return;
+            }
+
+            if (name.length < 2) {
+                showError('registerError', 'Имя должно содержать минимум 2 символа');
+                return;
+            }
+
+            if (phone.replace(/\D/g, '').length < 10) {
+                showError('registerError', 'Введите корректный номер телефона');
+                return;
+            }
+
+            if (pass.length < 6) {
+                showError('registerError', 'Пароль должен содержать минимум 6 символов');
+                return;
+            }
+
+            if (pass !== passConfirm) {
+                showError('registerError', 'Пароли не совпадают');
+                return;
+            }
+
+            if (users.find(u => u.email === email)) {
+                showError('registerError', 'Пользователь с таким email уже существует');
+                return;
+            }
+
+            const newUser = { name, phone, email, password: pass, isAdmin: false };
+            users.push(newUser);
+            saveUsers();
+
+            applyAuth(newUser);
+            closeRegisterModal();
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            isAdmin = false;
+            currentUser = null;
+
+            document.querySelector('.auth-buttons').querySelectorAll('.btn-login, .btn-register').forEach(b => b.style.display = 'inline-block');
+            document.getElementById('userMenu').style.display = 'none';
+            document.getElementById('btnAdminPanel').style.display = 'none';
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+            clearSession();
+
+            cart = [];
+            updateCartCount();
+            document.querySelectorAll('.btn-cart.added').forEach(btn => {
+                btn.textContent = 'В корзину';
+                btn.classList.remove('added');
+            });
+            renderReviews();
+            renderProducts();
+        }
+
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+                setTimeout(() => e.target.style.display = 'none', 300);
+            }
+        }
+
+        // Catalog filter
+        function filterProducts(category, el) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (el) el.classList.add('active');
+            currentFilter = category;
+            renderProducts();
+        }
+
+        function sortProducts() {
+            currentSort = document.getElementById('sortSelect').value;
+            renderProducts();
+        }
+
+        function filterByBrand(brand) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn').classList.add('active');
+            document.getElementById('sortSelect').value = 'default';
+            currentSort = 'default';
+            currentFilter = 'all';
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.filter(p => p.name.toLowerCase().includes(brand.toLowerCase())).map(productCardHtml).join('');
+            document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Search
+        function searchProducts() {
+            const query = document.querySelector('.hero-search input').value.trim().toLowerCase();
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn').classList.add('active');
+            document.getElementById('sortSelect').value = 'default';
+            currentSort = 'default';
+            currentFilter = 'all';
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.filter(p => !query || p.name.toLowerCase().includes(query) || p.sku.toLowerCase().includes(query)).map(productCardHtml).join('');
+            document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reviews
+        let reviews = [
+            { id: 1, name: "Алексей Петров", date: "15 мая 2026", stars: 5, text: "Заказывал тормозные колодки TRW и диски Brembo. Доставили за 2 дня в Москву. Качество отличное, всё подошло идеально. Рекомендую этот магазин!", product: "Тормозные колодки передние TRW" },
+            { id: 2, name: "Мария Иванова", date: "12 мая 2026", stars: 5, text: "Очень удобный каталог, нашла нужный масляный фильтр за минуту. Менеджер помог подобрать по VIN номеру. Спасибо за быструю работу!", product: "Масляный фильтр Mann-Filter" },
+            { id: 3, name: "Дмитрий Козлов", date: "10 мая 2026", stars: 4, text: "Заказывал амортизаторы KYB и опорные подшипники. Всё оригинал, цены ниже чем у конкурентов. Единственное - доставка в СПб заняла 4 дня, но это не критично.", product: "Амортизатор задний KYB" },
+            { id: 4, name: "Ольга Сидорова", date: "8 мая 2026", stars: 5, text: "Покупаю здесь уже второй год. Всегда доступные цены и огромный выбор. Заказываю как для себя, так и для мужа. Очень довольны!", product: "Комплект ГРМ Bosch" },
+            { id: 5, name: "Сергей Волков", date: "5 мая 2026", stars: 5, text: "Заказал ступичные подшипники SKF. Приехали быстро, всё оригинальное. Консультант помог с выбором, объяснил разницу между моделями. Профессиональный подход!", product: "Подшипник ступицы SKF" },
+            { id: 6, name: "Ирина Кузнецова", date: "3 мая 2026", stars: 5, text: "Первый раз заказывала запчасти онлайн. Менеджер подробно проконсультировал по телефону. Заказ приехал в целости и сохранности. Буду обращаться ещё!", product: "Комплект тормозных колодок Bosch" },
+            { id: 7, name: "Андрей Смирнов", date: "1 мая 2026", stars: 5, text: "Заказал стартер Bosch для своего Тойота Камри. Пришёл за 3 дня в Новосибирск. Работает отлично, машина заводится с пол-оборота. Рекомендую!", product: "Стартер Bosch" },
+            { id: 8, name: "Елена Морозова", date: "28 апреля 2026", stars: 4, text: "Хороший магазин, большой выбор запчастей для корейских авто. Заказывала подвеску Lemforder. Единственное - неудобно что нет примерочных для автозапчастей, но это мелочь.", product: "Рычаг передний нижний Lemforder" },
+            { id: 9, name: "Павел Николаев", date: "25 апреля 2026", stars: 5, text: "Профессиональный автосервис, советую этот магазин всем знакомым. Заказываю здесь запчасти для ремонта клиентских авто уже 3 года. Ни разу не подвели!", product: "Комплект амортизаторов Sachs" },
+            { id: 10, name: "Наталья Петрова", date: "22 апреля 2026", stars: 5, text: "Срочно нужны были тормозные диски Brembo. Позвонила утром, к вечеру уже ставила на машину. Отдельное спасибо курьеру за быструю доставку!", product: "Диск тормозной вентилируемый Brembo" },
+            { id: 11, name: "Виктор Орлов", date: "18 апреля 2026", stars: 5, text: "Заказал комплект для замены ГРМ Gates с роликами. Всё качественное, упаковка оригинальная. Цена на 15% ниже чем в других магазинах. Однозначно буду обращаться снова!", product: "Комплект ГРМ Gates" },
+            { id: 12, name: "Татьяна Белова", date: "15 апреля 2026", stars: 4, text: "Заказывала аккумулятор Varta. Привезли быстро, помогли с установкой. Пока всё работает исправно. Единственное - хотелось бы больше скидок для постоянных клиентов.", product: "Аккумулятор Varta 60Ач" },
+            { id: 13, name: "Роман Жуков", date: "12 апреля 2026", stars: 5, text: "Отличный сервис! Заказал генератор Valeo для Renault Megane. Консультант объяснил все нюансы по установке. Доставили за 2 дня в Краснодар. Ставлю твёрдую пятёрку!", product: "Генератор Valeo" },
+            { id: 14, name: "Оксана Лебедева", date: "8 апреля 2026", stars: 5, text: "Решила сэкономить и заказала здесь масляный фильтр Mann-Filter вместо оригинального. Качество не уступает, а цена в 2 раза ниже. Муж доволен, машина тоже!", product: "Масляный фильтр Mann-Filter" },
+            { id: 15, name: "Игорь Сидоров", date: "5 апреля 2026", stars: 5, text: "Покупал стойки стабилизатора Lemforder на Audi A6. Оригинал, Германия. Доставили в Самару за 3 дня. Установил на СТО, всё идеально. Магазин рекомендую!", product: "Стойка стабилизатора Lemforder" },
+            { id: 16, name: "Анна Козлова", date: "1 апреля 2026", stars: 5, text: "Заказывала свечи зажигания Denso для Honda Civic. Подобрали по VIN-номеру, очень удобно. Пришли быстро, работает всё шикарно. Спасибо за помощь!", product: "Свеча зажигания Denso" },
+            { id: 17, name: "Максим Волков", date: "28 марта 2026", stars: 4, text: "Заказал подшипник ступицы SKF на Mitsubishi Outlander. Качество отличное, тишина при езде вернулась. Доставка в Воронеж заняла 4 дня, но терпимо.", product: "Подшипник ступицы SKF" },
+            { id: 18, name: "Светлана Павлова", date: "25 марта 2026", stars: 5, text: "Долго выбирала между KYB и Sachs. Менеджер подробно объяснил разницу, помог определиться. Заказала KYB, очень довольна! Машина стала управляемее.", product: "Амортизатор передний KYB" },
+            { id: 19, name: "Денис Федоров", date: "20 марта 2026", stars: 5, text: "Заказал прокладку ГБЦ Victor Reinz на Volkswagen Passat. Оригинал, Германия. Всё подошло идеально, двигатель больше не берёт масло. Спасибо магазину!", product: "Прокладка ГБЦ Victor Reinz" },
+            { id: 20, name: "Юлия Соколова", date: "15 марта 2026", stars: 5, text: "Постоянный клиент этого магазина. Заказываю здесь всё для своей Toyota: фильтры, тормоза, подвеску. Всегда оригинальные запчасти, быстрая доставка, вежливые менеджеры. Лучший магазин!", product: "Фильтр топливный Toyota" }
+        ];
+
+        // Products
+        let products = [
+            {cat:"engine",badge:"Хит",img:"⚙️",name:"Ремень ГРМ Bosch",sku:"09863 32825",price:1290},
+            {cat:"engine",badge:"",img:"⚙️",name:"Свеча зажигания Denso",sku:"IXEH20TT",price:920},
+            {cat:"engine",badge:"",img:"⚙️",name:"Прокладка ГБЦ Victor Reinz",sku:"61-37703-00",price:3400},
+            {cat:"engine",badge:"Новинка",img:"⚙️",name:"Поршень комплект Mahle",sku:"98611470",price:18500},
+            {cat:"engine",badge:"",img:"⚙️",name:"Кольца поршневые набор AE",sku:"498054H00",price:4200},
+            {cat:"engine",badge:"",img:"⚙️",name:"Ролик натяжителя Gates",sku:"T43128",price:1850},
+            {cat:"engine",badge:"",img:"⚙️",name:"Клапан впускной Supertech",sku:"STV-1114-SI",price:2700},
+            {cat:"engine",badge:"",img:"⚙️",name:"Шатун болт ARP",sku:"201-4301",price:3100},
+            {cat:"engine",badge:"",img:"⚙️",name:"Подшипник коленвала SKF",sku:"507523",price:2450},
+            {cat:"engine",badge:"",img:"⚙️",name:"Цепь ГРМ INA",sku:"LK01091",price:5600},
+            {cat:"engine",badge:"",img:"⚙️",name:"Головка блока цилиндров ВАЗ",sku:"2112-1003015",price:22000},
+            {cat:"engine",badge:"Акция",img:"⚙️",name:"Масляный насос Renault",sku:"7701478365",price:5600},
+            {cat:"engine",badge:"",img:"⚙️",name:"Термостат Wahler",sku:"818058SP",price:3200},
+            {cat:"engine",badge:"",img:"⚙️",name:"Водяной помпа SKF",sku:"VKPC87310",price:4100},
+            {cat:"engine",badge:"",img:"⚙️",name:"Дроссельная заслонка Bosch",sku:"0280750021",price:7800},
+            {cat:"engine",badge:"",img:"⚙️",name:"Форсунка инжекторная Bosch",sku:"0445110060",price:3400},
+            {cat:"engine",badge:"",img:"⚙️",name:"Регулятор давления топлива",sku:"894329-2600",price:2900},
+            {cat:"engine",badge:"",img:"⚙️",name:"Впускной коллектор",sku:"17107507AE",price:6500},
+            {cat:"engine",badge:"",img:"⚙️",name:"Болт ГБЦ ARP",sku:"202-4702",price:5200},
+            {cat:"engine",badge:"",img:"⚙️",name:"Патрубок интеркулера",sku:"CSF-COR-H-IC-RED",price:4800},
+            {cat:"brakes",badge:"Акция",img:"🛞",name:"Тормозные колодки передние TRW",sku:"GDB1955",price:2450},
+            {cat:"brakes",badge:"",img:"🛞",name:"Тормозной диск передний Lemforder",sku:"3142601",price:4200},
+            {cat:"brakes",badge:"Акция",img:"🛞",name:"Суппорт тормозной передний ATE",sku:"13.0460-7246",price:15800},
+            {cat:"brakes",badge:"",img:"🛞",name:"Тормозные колодки задние Bosch",sku:"0986494741",price:1980},
+            {cat:"brakes",badge:"",img:"🛞",name:"Диск тормозной задний Brembo",sku:"09.9466.14",price:3750},
+            {cat:"brakes",badge:"",img:"🛞",name:"Шланг тормозной ATE",sku:"24.7510-0230",price:1100},
+            {cat:"brakes",badge:"",img:"🛞",name:"Цилиндр тормозной задний TRW",sku:"D1041E",price:2300},
+            {cat:"brakes",badge:"",img:"🛞",name:"Датчик износа колодок Brembo",sku:"P 85 088",price:650},
+            {cat:"brakes",badge:"",img:"🛞",name:"Вакуумный усилитель тормозов TRW",sku:"GID396",price:9200},
+            {cat:"brakes",badge:"",img:"🛞",name:"Главный тормозной цилиндр ATE",sku:"03.3360-0370",price:7600},
+            {cat:"brakes",badge:"Хит",img:"🛞",name:"Колодки ручного тормоза Sachs",sku:"3001999",price:1450},
+            {cat:"brakes",badge:"",img:"🛞",name:"Адаптер датчика износа Brembo",sku:"P 85 114",price:350},
+            {cat:"brakes",badge:"",img:"🛞",name:"Тормозная жидкость Motul DOT5.1 500мл",sku:"108780",price:780},
+            {cat:"brakes",badge:"",img:"🛞",name:"Диск тормозной вентилируемый Brembo",sku:"09.8107.14",price:6400},
+            {cat:"brakes",badge:"",img:"🛞",name:"Скоба суппорта задняя Meyle",sku:"014 011 6003",price:3100},
+            {cat:"brakes",badge:"",img:"🛞",name:"Направляющая суппорта TRW",sku:"GCB1103",price:420},
+            {cat:"suspension",badge:"",img:"🔩",name:"Амортизатор задний KYB",sku:"339021",price:3870},
+            {cat:"suspension",badge:"Хит",img:"🔩",name:"Стойка стабилизатора Lemforder",sku:"2746601",price:1650},
+            {cat:"suspension",badge:"",img:"🔩",name:"Опора амортизатора SKF",sku:"VKD35123",price:2100},
+            {cat:"suspension",badge:"",img:"🔩",name:"Рычаг передний нижний Lemforder",sku:"3145201",price:5400},
+            {cat:"suspension",badge:"",img:"🔩",name:"Сайлентблок рычага Meyle",sku:"306 052 0018",price:780},
+            {cat:"suspension",badge:"Новинка",img:"🔩",name:"Стойка амортизатора передняя Sachs",sku:"314 822",price:7200},
+            {cat:"suspension",badge:"",img:"🔩",name:"Подшипник ступицы передний SKF",sku:"VKBA3573",price:4900},
+            {cat:"suspension",badge:"",img:"🔩",name:"Пружина подвески Eibach",sku:"28100-140",price:8500},
+            {cat:"suspension",badge:"",img:"🔩",name:"Шаровая опора Moog",sku:"K80149",price:1950},
+            {cat:"suspension",badge:"",img:"🔩",name:"Ступица передняя",sku:"713 510 010",price:6300},
+            {cat:"suspension",badge:"",img:"🔩",name:"Ступица задняя с подшипником SKF",sku:"VKBA3644",price:7800},
+            {cat:"suspension",badge:"Акция",img:"🔩",name:"Рычаг задний поперечный Lemforder",sku:"3744501",price:4600},
+            {cat:"suspension",badge:"",img:"🔩",name:"Буфер хода сжатия polyurethane",sku:"VKD35057K1",price:1200},
+            {cat:"suspension",badge:"",img:"🔩",name:"Отбойник амортизатора Sachs",sku:"314 726",price:890},
+            {cat:"suspension",badge:"",img:"🔩",name:"Поперечина подвески задняя",sku:"2108-2904830",price:8900},
+            {cat:"suspension",badge:"",img:"🔩",name:"Подрамник передний BMW",sku:"31106771893",price:18500},
+            {cat:"suspension",badge:"Новинка",img:"🔩",name:"Комплект опорных подшипников Lemforder",sku:"3146401",price:5400},
+            {cat:"suspension",badge:"",img:"🔩",name:"С.ProgressBar стойки Sachs",sku:"314 624",price:3700},
+            {cat:"suspension",badge:"",img:"🔩",name:"Наконечник рулевой Febi",sku:"22271",price:1350},
+            {cat:"suspension",badge:"",img:"🔩",name:"Рулевая тяга Lemforder",sku:"3384201",price:2800},
+            {cat:"electric",badge:"Новинка",img:"💡",name:"Стартер Bosch",sku:"0986020260",price:8950},
+            {cat:"electric",badge:"",img:"💡",name:"Генератор Valeo",sku:"438360",price:12500},
+            {cat:"electric",badge:"",img:"💡",name:"Датчик кислород Bosch",sku:"0258006537",price:4100},
+            {cat:"electric",badge:"",img:"💡",name:"Датчик температуры Delphi",sku:"DS10186",price:1350},
+            {cat:"electric",badge:"",img:"💡",name:"Катушка зажигания Denso",sku:"673-1301",price:5800},
+            {cat:"electric",badge:"",img:"💡",name:"Фара передняя левая Depo",sku:"312-1502L-UE",price:9400},
+            {cat:"electric",badge:"",img:"💡",name:"Поводок стеклоочистителя SWF",sku:"829 128",price:890},
+            {cat:"electric",badge:"",img:"💡",name:"Промежуточное реле Bosch",sku:"0332014113",price:520},
+            {cat:"electric",badge:"",img:"💡",name:"Датчик давления масла VDO",sku:"360 410",price:1750},
+            {cat:"electric",badge:"",img:"💡",name:"Блок управления двигателем Bosch",sku:"0281011275",price:24000},
+            {cat:"electric",badge:"Акция",img:"💡",name:"Датчик ABS Wabco",sku:"1009366587",price:3200},
+            {cat:"electric",badge:"",img:"💡",name:"Реле поворотов Mitsubishi",sku:"MR997233",price:1100},
+            {cat:"electric",badge:"",img:"💡",name:"Привод спидометра Nissan",sku:"24960-ED00A",price:2600},
+            {cat:"electric",badge:"",img:"💡",name:"Выключатель стоп-сигнала Hella",sku:"6PP009115-001",price:780},
+            {cat:"electric",badge:"",img:"💡",name:"Модуль управления освещением",sku:"51237225634",price:8400},
+            {cat:"electric",badge:"Хит",img:"💡",name:"Датчик угла поворота Bosch",sku:"0273002705",price:5100},
+            {cat:"electric",badge:"",img:"💡",name:"Электродвигатель омывателя Hella",sku:"6JN009440-001",price:1800},
+            {cat:"filters",badge:"",img:"🌀",name:"Масляный фильтр Mann-Filter",sku:"W712/94",price:580},
+            {cat:"filters",badge:"Хит",img:"🌀",name:"Воздушный фильтр Bosch",sku:"F026400285",price:820},
+            {cat:"filters",badge:"",img:"🌀",name:"Топливный фильтр Mahle",sku:"K1610D",price:1450},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр салона MANN",sku:"CU2130",price:1100},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр АКПП Aisin",sku:"35330-21040",price:2800},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр гидроусилителя INA",sku:"813012",price:1650},
+            {cat:"filters",badge:"Новинка",img:"🌀",name:"Фильтр АКПП Toyota",sku:"04152-YZZA6",price:3200},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр тонкой очистки топлива",sku:"WK521/9x",price:1900},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр воздуха цилиндрический",sku:"A6185W",price:1350},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр-уловитель кондиционера",sku:"88568-30070",price:2100},
+            {cat:"filters",badge:"Акция",img:"🌀",name:"Фильтр салона угольный Knecht",sku:"LAK508",price:1800},
+            {cat:"filters",badge:"",img:"🌀",name:"Фильтр АКПП Nissan",sku:"31390-31X0A",price:2500},
+            {cat:"body",badge:"",img:"🚗",name:"Бампер передний OCAP",sku:"71702-0E050",price:14500},
+            {cat:"body",badge:"",img:"🚗",name:"Зеркало боковое левое TYC",sku:"87520-49070",price:6200},
+            {cat:"body",badge:"Акция",img:"🚗",name:"Фонарь задний правый Depo",sku:"432-1503R-UE",price:3900},
+            {cat:"body",badge:"",img:"🚗",name:"Решетка радиатора п/пластик",sku:"17117523018",price:2800},
+            {cat:"body",badge:"",img:"🚗",name:"Дверь задняя левая ВАЗ",sku:"2190-6100014",price:11500},
+            {cat:"body",badge:"",img:"🚗",name:"Капот ВАЗ 2110",sku:"2110-5300014",price:8900},
+            {cat:"body",badge:"Хит",img:"🚗",name:"Крыло переднее левое ВАЗ 2110",sku:"2110-5301012",price:4200},
+            {cat:"body",badge:"",img:"🚗",name:"Порог левый ВАЗ 2112",sku:"2112-5300250",price:3800},
+            {cat:"body",badge:"",img:"🚗",name:"Ручка двери наружная черная",sku:"7701046790",price:850},
+            {cat:"body",badge:"Акция",img:"🚗",name:"Уплотнитель стекла двери передней",sku:"77790-38030",price:620},
+            {cat:"body",badge:"",img:"🚗",name:"Замок капота ВАЗ 2110",sku:"2110-5300012",price:1650},
+            {cat:"body",badge:"",img:"🚗",name:"Молдинг двери правый chrome",sku:"75844-1M000",price:1200},
+            {cat:"body",badge:"",img:"🚗",name:"Брызговик передний левый",sku:"53838-1K000",price:1900},
+            {cat:"body",badge:"",img:"🚗",name:"Усилитель бампера передний",sku:"6Q0805165",price:2400},
+            {cat:"oil",badge:"Хит",img:"🛢️",name:"Моторное масло Liqui Moly 5W-40 4л",sku:"2339",price:4500},
+            {cat:"oil",badge:"",img:"🛢️",name:"Трансмиссионное масло Motul 75W-90 1л",sku:"105563",price:2100},
+            {cat:"oil",badge:"",img:"🛢️",name:"Тормозная жидкость DOT-4 Castrol 1л",sku:"156A6",price:980},
+            {cat:"oil",badge:"",img:"🛢️",name:"Антифриз G12 5л",sku:"VS1005",price:1800},
+            {cat:"oil",badge:"",img:"🛢️",name:"Жидкость ГУР Pentosin CHF11S 1л",sku:"1406127",price:2400},
+            {cat:"oil",badge:"",img:"🛢️",name:"Масло моторное Shell 5W-30 4л",sku:"550043207",price:3800},
+            {cat:"oil",badge:"",img:"🛢️",name:"Моторное масло Total 5W-40 5л",sku:"157865",price:5200},
+            {cat:"oil",badge:"Новинка",img:"🛢️",name:"Масло трансмиссионное Eneos 75W-90 1л",sku:"30010413-01",price:1600},
+            {cat:"oil",badge:"",img:"🛢️",name:"Антифриз G12+ 5л",sku:"186008",price:2100},
+            {cat:"oil",badge:"",img:"🛢️",name:"Тормозная жидкость ATE SL DOT4 1л",sku:"750701",price:1100},
+            {cat:"oil",badge:"",img:"🛢️",name:"Жидкость омывателя зимняя -30 5л",sku:"999-902-118-01",price:550},
+            {cat:"oil",badge:"Акция",img:"🛢️",name:"Моторное масло Castrol 0W-20 4л",sku:"1537C3",price:4800}
+        ];
+
+        let currentFilter = 'all';
+        let currentSort = 'default';
+
+        function formatPrice(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+        }
+
+        function productCardHtml(p) {
+            const realIndex = products.indexOf(p);
+            let badgeHtml = p.badge ? '<div class="product-badge">' + p.badge + '</div>' : '';
+            let adminBtns = '';
+            if (isLoggedIn && isAdmin) {
+                adminBtns = '<div class="product-admin-btns"><button class="btn-edit-product" onclick="editProduct(' + realIndex + ')">✏️</button><button class="btn-delete-product" onclick="deleteProduct(' + realIndex + ')">🗑️</button></div>';
+            }
+            return '<div class="product-card" data-category="' + p.cat + '">' + adminBtns + badgeHtml + '<div class="product-img">' + p.img + '</div><h3>' + p.name + '</h3><p class="product-sku">Артикул: ' + p.sku + '</p><p class="product-price">' + formatPrice(p.price) + '</p><button class="btn-cart" onclick="addToCart(this)">В корзину</button></div>';
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const adminForm = document.getElementById('adminProductForm');
+            let filtered = currentFilter === 'all' ? products : products.filter(p => p.cat === currentFilter);
+            let sorted = filtered.slice();
+            if (currentSort === 'price-asc') sorted.sort((a, b) => a.price - b.price);
+            else if (currentSort === 'price-desc') sorted.sort((a, b) => b.price - a.price);
+            else if (currentSort === 'name-asc') sorted.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+            else if (currentSort === 'name-desc') sorted.sort((a, b) => b.name.localeCompare(a.name, 'ru'));
+
+            grid.innerHTML = sorted.map(productCardHtml).join('');
+            adminForm.style.display = (isLoggedIn && isAdmin) ? 'block' : 'none';
+        }
+
+        function editProduct(index) {
+            const p = products[index];
+            document.getElementById('editProductIndex').value = index;
+            document.getElementById('productName').value = p.name;
+            document.getElementById('productSku').value = p.sku;
+            document.getElementById('productPrice').value = p.price;
+            document.getElementById('productCategory').value = p.cat;
+            document.getElementById('productBadge').value = p.badge;
+            document.getElementById('productEmoji').value = p.img;
+            document.getElementById('productFormTitle').textContent = 'Редактировать товар';
+            document.getElementById('adminProductForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteProduct(index) {
+            document.getElementById('confirmTitle').textContent = 'Удалить товар?';
+            document.getElementById('confirmText').textContent = 'Удалить товар "' + products[index].name + '"?';
+            document.getElementById('confirmModal').style.display = 'flex';
+            setTimeout(() => document.getElementById('confirmModal').classList.add('active'), 10);
+            document.getElementById('confirmOkBtn').onclick = function() {
+                const name = products[index].name;
+                cart = cart.filter(item => item.name !== name);
+                products.splice(index, 1);
+                updateCartCount();
+                renderProducts();
+                closeConfirmModal();
+            };
+        }
+
+        function closeConfirmModal() {
+            var m = document.getElementById('confirmModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function saveProduct() {
+            const editIndex = parseInt(document.getElementById('editProductIndex').value);
+            const name = document.getElementById('productName').value.trim();
+            const sku = document.getElementById('productSku').value.trim();
+            const price = parseInt(document.getElementById('productPrice').value);
+            const cat = document.getElementById('productCategory').value;
+            const badge = document.getElementById('productBadge').value.trim();
+            const emoji = document.getElementById('productEmoji').value.trim() || '📦';
+            if (!name || !sku || !price || price <= 0) { alert('Заполните название, артикул и цену'); return; }
+            if (editIndex >= 0) {
+                products[editIndex] = { cat, badge, img: emoji, name, sku, price };
+            } else {
+                products.push({ cat, badge, img: emoji, name, sku, price });
+            }
+            cancelProductEdit();
+            renderProducts();
+        }
+
+        function cancelProductEdit() {
+            document.getElementById('editProductIndex').value = -1;
+            document.getElementById('productName').value = '';
+            document.getElementById('productSku').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCategory').value = 'engine';
+            document.getElementById('productBadge').value = '';
+            document.getElementById('productEmoji').value = '';
+            document.getElementById('productFormTitle').textContent = 'Добавить товар';
+        }
+
+        function renderReviews() {
+            const grid = document.getElementById('reviewsGrid');
+            const adminForm = document.getElementById('adminReviewForm');
+            const userForm = document.getElementById('userReviewForm');
+            let html = '';
+
+            reviews.forEach((r, i) => {
+                const starsStr = '★'.repeat(r.stars) + '☆'.repeat(5 - r.stars);
+                const initial = r.name.charAt(0);
+                let adminBtns = '';
+                if (isLoggedIn && isAdmin) {
+                    adminBtns = `
+                        <div class="review-admin-btns">
+                            <button class="review-btn-edit" onclick="editReview(${i})">✏️</button>
+                            <button class="review-btn-delete" onclick="deleteReview(${i})">🗑️</button>
+                        </div>
+                    `;
+                }
+                html += `
+                    <div class="review-card">
+                        ${adminBtns}
+                        <div class="review-header">
+                            <div class="review-avatar">${initial}</div>
+                            <div class="review-info">
+                                <h4>${r.name}</h4>
+                                <span class="review-date">${r.date}</span>
+                            </div>
+                            <div class="review-rating">${starsStr}</div>
+                        </div>
+                        <p class="review-text">${r.text}</p>
+                        <span class="review-product">Заказ: ${r.product}</span>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+            adminForm.style.display = (isLoggedIn && isAdmin) ? 'block' : 'none';
+            userForm.style.display = (isLoggedIn && !isAdmin) ? 'block' : 'none';
+
+            // Update stats in real-time
+            const totalCount = reviews.length;
+            document.getElementById('statCount').textContent = totalCount;
+            if (totalCount > 0) {
+                const totalStars = reviews.reduce((sum, r) => sum + r.stars, 0);
+                const avgRating = (totalStars / totalCount).toFixed(1);
+                document.getElementById('statRating').textContent = avgRating;
+                const fullStars = Math.round(parseFloat(avgRating));
+                document.getElementById('statStars').innerHTML = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+                const recommendCount = reviews.filter(r => r.stars >= 4).length;
+                const recommendPct = Math.round((recommendCount / totalCount) * 100);
+                document.getElementById('statRecommend').textContent = recommendPct + '%';
+            } else {
+                document.getElementById('statRating').textContent = '0.0';
+                document.getElementById('statStars').innerHTML = '☆☆☆☆☆';
+                document.getElementById('statRecommend').textContent = '0%';
+            }
+        }
+
+        function addReview() {
+            const name = document.getElementById('reviewName').value.trim();
+            const product = document.getElementById('reviewProduct').value.trim();
+            const stars = parseInt(document.getElementById('reviewStars').value);
+            const text = document.getElementById('reviewText').value.trim();
+            if (!name || !text) { alert('Заполните имя и текст отзыва'); return; }
+            const today = new Date();
+            const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+            const dateStr = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
+            reviews.unshift({ id: Date.now(), name, date: dateStr, stars, text, product: product || 'Не указан' });
+            document.getElementById('reviewName').value = '';
+            document.getElementById('reviewProduct').value = '';
+            document.getElementById('reviewText').value = '';
+            document.getElementById('reviewStars').value = '5';
+            renderReviews();
+        }
+
+        function addUserReview() {
+            const product = document.getElementById('userReviewProduct').value.trim();
+            const stars = parseInt(document.getElementById('userReviewStars').value);
+            const text = document.getElementById('userReviewText').value.trim();
+            if (!text) { alert('Напишите текст отзыва'); return; }
+            if (!product) { alert('Укажите какой товар вы приобрели'); return; }
+            const today = new Date();
+            const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+            const dateStr = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
+            reviews.unshift({ id: Date.now(), name: currentUser.name, date: dateStr, stars, text, product });
+            document.getElementById('userReviewProduct').value = '';
+            document.getElementById('userReviewText').value = '';
+            document.getElementById('userReviewStars').value = '5';
+            renderReviews();
+        }
+
+        function editReview(index) {
+            const r = reviews[index];
+            const newText = prompt('Редактировать отзыв:', r.text);
+            if (newText !== null && newText.trim() !== '') {
+                reviews[index].text = newText.trim();
+                renderReviews();
+            }
+        }
+
+        function deleteReview(index) {
+            if (confirm('Удалить этот отзыв?')) {
+                reviews.splice(index, 1);
+                renderReviews();
+            }
+        }
+
+        // Cart
+        let cart = [];
+
+        function parsePrice(priceStr) {
+            return parseInt(priceStr.replace(/\s/g, '').replace('₽', ''));
+        }
+
+        function checkLogin() {
+            if (!isLoggedIn) {
+                openModal();
+                return false;
+            }
+            return true;
+        }
+
+        function addToCart(btn) {
+            if (!checkLogin()) return;
+            const card = btn.closest('.product-card');
+            const name = card.querySelector('h3').textContent;
+            const price = parsePrice(card.querySelector('.product-price').textContent);
+            const sku = card.querySelector('.product-sku').textContent;
+
+            const existing = cart.find(item => item.name === name);
+            if (existing) {
+                existing.qty++;
+                btn.textContent = 'В корзине ✓';
+            } else {
+                cart.push({ name, price, sku, qty: 1 });
+                btn.textContent = 'В корзине ✓';
+                btn.classList.add('added');
+            }
+            updateCartCount();
+        }
+
+        function removeFromCart(index) {
+            const item = cart[index];
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (card.querySelector('h3').textContent === item.name) {
+                    const cartBtn = card.querySelector('.btn-cart');
+                    cartBtn.textContent = 'В корзину';
+                    cartBtn.classList.remove('added');
+                }
+            });
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCart();
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                removeFromCart(index);
+            } else {
+                renderCart();
+            }
+        }
+
+        function updateCartCount() {
+            const total = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = total;
+        }
+
+        function openCart() {
+            renderCart();
+            var m = document.getElementById('cartModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+        }
+
+        function closeCart() {
+            var m = document.getElementById('cartModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function renderCart() {
+            const cartAuth = document.getElementById('cartAuth');
+            const cartEmpty = document.getElementById('cartEmpty');
+            const cartItemsList = document.getElementById('cartItemsList');
+
+            if (!isLoggedIn) {
+                cartAuth.style.display = 'block';
+                cartEmpty.style.display = 'none';
+                cartItemsList.style.display = 'none';
+                return;
+            }
+
+            if (cart.length === 0) {
+                cartAuth.style.display = 'none';
+                cartEmpty.style.display = 'block';
+                cartItemsList.style.display = 'none';
+                return;
+            }
+
+            cartAuth.style.display = 'none';
+            cartEmpty.style.display = 'none';
+            cartItemsList.style.display = 'block';
+
+            const container = document.getElementById('cartItems');
+            let total = 0;
+            let html = '';
+
+            cart.forEach((item, i) => {
+                const sum = item.price * item.qty;
+                total += sum;
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <p class="cart-item-price">${item.price.toLocaleString()} ₽</p>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+                            <span class="qty-value">${item.qty}</span>
+                            <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+                        </div>
+                        <div class="cart-item-sum">${sum.toLocaleString()} ₽</div>
+                        <button class="cart-item-remove" onclick="removeFromCart(${i})">✕</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('totalPrice').textContent = total.toLocaleString() + ' ₽';
+        }
+
+        function checkout() {
+            var total = document.getElementById('totalPrice').textContent;
+            var count = cart.reduce((s, i) => s + i.qty, 0);
+            var address = document.getElementById('deliveryAddress').value.trim();
+            if (!address) {
+                document.getElementById('deliveryAddress').style.borderColor = '#e94560';
+                document.getElementById('deliveryAddress').focus();
+                return;
+            }
+
+            // Save order to history (per-user)
+            var order = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('ru-RU'),
+                items: cart.map(function(i) { return { name: i.name, qty: i.qty, price: i.price }; }),
+                total: total,
+                address: address,
+                status: 'pending'
+            };
+            var ordersKey = 'avtoOrders_' + currentUser.email;
+            var orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+            orders.unshift(order);
+            localStorage.setItem(ordersKey, JSON.stringify(orders));
+
+            var itemsHtml = '<div class="success-items">';
+            cart.forEach(function(item) {
+                itemsHtml += '<div class="success-item"><span class="success-item-name">' + item.name + '</span><span class="success-item-qty">×' + item.qty + '</span><span class="success-item-price">' + formatPrice(item.price * item.qty) + '</span></div>';
+            });
+            itemsHtml += '</div>';
+            document.getElementById('successDetails').innerHTML =
+                '<p><strong>Товаров:</strong> ' + count + ' шт.</p>' +
+                itemsHtml +
+                '<p><strong>Сумма:</strong> ' + total + '</p>' +
+                '<p><strong>Доставка:</strong> ' + address + '</p>';
+            cart = [];
+            updateCartCount();
+            closeCart();
+            document.getElementById('deliveryAddress').value = '';
+            document.getElementById('deliveryAddress').style.borderColor = '';
+            document.querySelectorAll('.btn-cart.added').forEach(btn => {
+                btn.textContent = 'В корзину';
+                btn.classList.remove('added');
+            });
+            var m = document.getElementById('successModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+        }
+
+        function closeSuccess() {
+            var m = document.getElementById('successModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function openOrdersModal() {
+            var ordersKey = 'avtoOrders_' + currentUser.email;
+            var orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+            var list = document.getElementById('ordersList');
+            if (orders.length === 0) {
+                list.innerHTML = '<div class="orders-empty">📦 У вас пока нет заказов</div>';
+            } else {
+                var html = '';
+                orders.forEach(function(order) {
+                    var status = order.status || 'pending';
+                    var statusHtml = '';
+                    if (status === 'accepted') statusHtml = '<div class="order-status status-accepted">✅ Заказ принят, ожидайте</div>';
+                    else if (status === 'rejected') statusHtml = '<div class="order-status status-rejected">❌ В заказе отказано</div>';
+                    else statusHtml = '<div class="order-status status-pending">⏳ Ожидает подтверждения</div>';
+                    html += '<div class="order-card">';
+                    html += '<div class="order-header"><span class="order-date">📅 ' + order.date + '</span><span class="order-id">Заказ #' + order.id + '</span></div>';
+                    html += '<div class="order-items">';
+                    order.items.forEach(function(item) {
+                        html += '<div class="order-item"><span class="order-item-name">' + item.name + '</span><span class="order-item-qty">×' + item.qty + '</span><span class="order-item-price">' + formatPrice(item.price * item.qty) + '</span></div>';
+                    });
+                    html += '</div>';
+                    html += '<div class="order-footer"><span class="order-address">🏠 ' + order.address + '</span><span class="order-total">' + order.total + '</span></div>';
+                    html += statusHtml;
+                    html += '</div>';
+                });
+                list.innerHTML = html;
+            }
+            var m = document.getElementById('ordersModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+        }
+
+        function closeOrdersModal() {
+            var m = document.getElementById('ordersModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function openAdminPanel() {
+            document.getElementById('adminStatProducts').textContent = products.length;
+            document.getElementById('adminStatReviews').textContent = reviews.length;
+            var totalOrders = 0;
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key.indexOf('avtoOrders_') === 0) {
+                    var userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+                    totalOrders += userOrders.length;
+                }
+            }
+            document.getElementById('adminStatOrders').textContent = totalOrders;
+            var m = document.getElementById('adminPanelModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+        }
+
+        function closeAdminPanel() {
+            var m = document.getElementById('adminPanelModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        function openAdminOrders() {
+            closeAdminPanel();
+            var list = document.getElementById('adminOrdersList');
+            var allOrders = [];
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key.indexOf('avtoOrders_') === 0) {
+                    var email = key.replace('avtoOrders_', '');
+                    var userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+                    userOrders.forEach(function(order, idx) {
+                        allOrders.push({ email: email, order: order, key: key, index: idx });
+                    });
+                }
+            }
+            allOrders.sort(function(a, b) { return b.order.id - a.order.id; });
+            if (allOrders.length === 0) {
+                list.innerHTML = '<div class="orders-empty">📋 Пока нет заказов</div>';
+            } else {
+                var html = '';
+                allOrders.forEach(function(item) {
+                    var o = item.order;
+                    var status = o.status || 'pending';
+                    var statusHtml = '';
+                    if (status === 'accepted') statusHtml = '<div class="admin-order-status status-accepted">✅ Принят</div>';
+                    else if (status === 'rejected') statusHtml = '<div class="admin-order-status status-rejected">❌ Отклонён</div>';
+                    else statusHtml = '<div class="admin-order-status status-pending">⏳ Ожидает</div>';
+
+                    var actionsHtml = '';
+                    if (status === 'pending') {
+                        actionsHtml = '<div class="admin-order-actions"><button class="admin-order-btn btn-accept" onclick="acceptOrder(\'' + item.key + '\',' + item.index + ')">✅ Принять</button><button class="admin-order-btn btn-reject" onclick="rejectOrder(\'' + item.key + '\',' + item.index + ')">❌ Отклонить</button></div>';
+                    }
+
+                    html += '<div class="admin-order-card">';
+                    html += '<div class="admin-order-header"><span class="admin-order-user">👤 ' + item.email + '</span>' + statusHtml + '<span class="admin-order-date">📅 ' + o.date + '</span></div>';
+                    html += '<div class="admin-order-items">';
+                    o.items.forEach(function(prod) {
+                        html += '<div class="admin-order-item"><span class="admin-order-item-name">' + prod.name + '</span><span class="admin-order-item-qty">×' + prod.qty + '</span><span class="admin-order-item-price">' + formatPrice(prod.price * prod.qty) + '</span></div>';
+                    });
+                    html += '</div>';
+                    html += '<div class="admin-order-footer"><span class="admin-order-address">🏠 ' + o.address + '</span><span class="admin-order-total">' + o.total + '</span></div>';
+                    html += actionsHtml;
+                    html += '</div>';
+                });
+                list.innerHTML = html;
+            }
+            var m = document.getElementById('adminOrdersModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+        }
+
+        function acceptOrder(key, index) {
+            var orders = JSON.parse(localStorage.getItem(key) || '[]');
+            if (orders[index]) {
+                orders[index].status = 'accepted';
+                localStorage.setItem(key, JSON.stringify(orders));
+                openAdminOrders();
+            }
+        }
+
+        function rejectOrder(key, index) {
+            var orders = JSON.parse(localStorage.getItem(key) || '[]');
+            if (orders[index]) {
+                orders[index].status = 'rejected';
+                localStorage.setItem(key, JSON.stringify(orders));
+                openAdminOrders();
+            }
+        }
+
+        function closeAdminOrders() {
+            var m = document.getElementById('adminOrdersModal');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 300);
+        }
+
+        renderReviews();
+        autoLogin();
+        renderProducts();
+    </script>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">🔧</span>
+                    <span class="logo-text">АвтоМастер</span>
+                    <p>Запчасти для вашего автомобиля</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Навигация</h4>
+                    <a href="#catalog">Каталог</a>
+                    <a href="#brands">Бренды</a>
+                    <a href="#delivery">Доставка</a>
+                    <a href="#reviews">Отзывы</a>
+                    <a href="#contacts">Контакты</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Информация</h4>
+                    <a href="about.html">О компании</a>
+                    <a href="payment.html">Оплата</a>
+                    <a href="warranty.html">Гарантия</a>
+                    <a href="blog.html">Блог</a>
+                </div>
+                <div class="footer-map">
+                    <h4>Мы на карте</h4>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2245.0!2d37.654!3d55.703!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTXCsDQyJzExLjciTiAzN8KwMzknMTQuNCJF!5e0!3m2!1sru!2sru!4v1700000000000!5m2!1sru!2sru" width="100%" height="200" style="border:0;border-radius:8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 АвтоМастер. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

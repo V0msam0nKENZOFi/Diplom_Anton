@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О компании - АвтоМастер</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 60px 0; text-align: center; }
+        .page-header h1 { font-size: 36px; }
+        .page-content { max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+        .page-content h2 { font-size: 28px; color: #1a1a2e; margin: 30px 0 15px; }
+        .page-content p { font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 15px; }
+        .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; margin: 30px 0; }
+        .about-stat { background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center; }
+        .about-stat .number { font-size: 36px; font-weight: bold; color: #e94560; }
+        .about-stat .label { font-size: 14px; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo"><span class="logo-icon">🔧</span><span class="logo-text">АвтоМастер</span></div>
+            <nav class="nav">
+                <a href="index.html#catalog">Каталог</a>
+                <a href="index.html#brands">Бренды</a>
+                <a href="index.html#delivery">Доставка</a>
+                <a href="index.html#reviews">Отзывы</a>
+                <a href="index.html#contacts">Контакты</a>
+            </nav>
+            <div class="header-right">
+                <a href="index.html" class="btn-login">На главную</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container"><h1>О компании</h1></div>
+    </section>
+
+    <section class="page-content">
+        <h2>Кто мы</h2>
+        <p>АвтоМастер — одна из крупнейших сетей магазинов автозапчастей в России. Мы работаем с 2010 года и помогаем владельцам автомобилей находить качественные запчасти по доступным ценам.</p>
+
+        <div class="about-grid">
+            <div class="about-stat"><div class="number">9</div><div class="label">Магазинов по России</div></div>
+            <div class="about-stat"><div class="number">100 000+</div><div class="label">Позиций в каталоге</div></div>
+            <div class="about-stat"><div class="number">50 000+</div><div class="label">Довольных клиентов</div></div>
+            <div class="about-stat"><div class="number">15</div><div class="label">Лет на рынке</div></div>
+        </div>
+
+        <h2>Наша миссия</h2>
+        <p>Мы стремимся сделать покупку автозапчастей максимально удобной и доступной. Каждый клиент получает профессиональную консультацию, гарантию на все товары и быструю доставку.</p>
+
+        <h2>Почему выбирают нас</h2>
+        <p><strong>Оригинальные запчасти</strong> — мы работаем напрямую с производителями: Bosch, Lemforder, Sachs, TRW, KYB, Denso и другими.</p>
+        <p><strong>Низкие цены</strong> — прямые поставки позволяют нам устанавливать конкурентные цены.</p>
+        <p><strong>Быстрая доставка</strong> — доставим по Москве за 1 день, по России за 3-5 дней.</p>
+        <p><strong>Профессиональные консультации</strong> — наши специалисты помогут подобрать запчасти по VIN-номеру автомобиля.</p>
+        <p><strong>Гарантия возврата</strong> — 14 дней на возврат товара без вопросов.</p>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 АвтоМастер. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

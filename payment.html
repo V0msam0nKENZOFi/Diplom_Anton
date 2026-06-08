@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата - АвтоМастер</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 60px 0; text-align: center; }
+        .page-header h1 { font-size: 36px; }
+        .page-content { max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+        .page-content h2 { font-size: 28px; color: #1a1a2e; margin: 30px 0 15px; }
+        .page-content p { font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 15px; }
+        .payment-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin: 30px 0; }
+        .payment-card { background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center; }
+        .payment-card .icon { font-size: 48px; margin-bottom: 15px; }
+        .payment-card h3 { font-size: 18px; color: #1a1a2e; margin-bottom: 10px; }
+        .payment-card p { font-size: 14px; color: #666; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo"><span class="logo-icon">🔧</span><span class="logo-text">АвтоМастер</span></div>
+            <nav class="nav">
+                <a href="index.html#catalog">Каталог</a>
+                <a href="index.html#brands">Бренды</a>
+                <a href="index.html#delivery">Доставка</a>
+                <a href="index.html#reviews">Отзывы</a>
+                <a href="index.html#contacts">Контакты</a>
+            </nav>
+            <div class="header-right">
+                <a href="index.html" class="btn-login">На главную</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container"><h1>Оплата</h1></div>
+    </section>
+
+    <section class="page-content">
+        <h2>Способы оплаты</h2>
+        <p>Мы предлагаем несколько удобных способов оплаты для вашего комфорта.</p>
+
+        <div class="payment-methods">
+            <div class="payment-card">
+                <div class="icon">💳</div>
+                <h3>Банковская карта</h3>
+                <p>Visa, MasterCard, МИР. Оплата онлайн при оформлении заказа или при получении.</p>
+            </div>
+            <div class="payment-card">
+                <div class="icon">💵</div>
+                <h3>Наличные</h3>
+                <p>Оплата наличными при самовывозе из магазина или курьеру при доставке.</p>
+            </div>
+            <div class="payment-card">
+                <div class="icon">📱</div>
+                <h3>СБП</h3>
+                <p>Система быстрых платежей. Перевод с карты на карту за несколько секунд.</p>
+            </div>
+            <div class="payment-card">
+                <div class="icon">🏦</div>
+                <h3>Безналичный расчёт</h3>
+                <p>Для юридических лиц. Выставление счёта, оплата по счёту в банке.</p>
+            </div>
+        </div>
+
+        <h2>Реквизиты для оплаты</h2>
+        <p><strong>ИНН:</strong> 7701234567</p>
+        <p><strong>КПП:</strong> 770101001</p>
+        <p><strong>Расчётный счёт:</strong> 40702810400000000001</p>
+        <p><strong>Банк:</strong> ПАО Сбербанк</p>
+        <p><strong>БИК:</strong> 044525225</p>
+        <p><strong>Корр. счёт:</strong> 30101810400000000225</p>
+
+        <h2>Возврат средств</h2>
+        <p>При возврате товара деньги возвращаются на тот же способ оплаты, которым вы оплатили заказ. Срок возврата — до 10 рабочих дней.</p>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 АвтоМастер. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

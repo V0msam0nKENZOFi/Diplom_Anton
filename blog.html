@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог - АвтоМастер</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 60px 0; text-align: center; }
+        .page-header h1 { font-size: 36px; }
+        .page-content { max-width: 1000px; margin: 0 auto; padding: 60px 20px; }
+        .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .blog-card { background: #f8f9fa; border-radius: 12px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
+        .blog-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .blog-img { height: 180px; background: linear-gradient(135deg, #e94560, #c73e54); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .blog-body { padding: 25px; }
+        .blog-date { font-size: 12px; color: #999; margin-bottom: 10px; }
+        .blog-body h3 { font-size: 18px; color: #1a1a2e; margin-bottom: 10px; }
+        .blog-body p { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 15px; }
+        .blog-tag { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo"><span class="logo-icon">🔧</span><span class="logo-text">АвтоМастер</span></div>
+            <nav class="nav">
+                <a href="index.html#catalog">Каталог</a>
+                <a href="index.html#brands">Бренды</a>
+                <a href="index.html#delivery">Доставка</a>
+                <a href="index.html#reviews">Отзывы</a>
+                <a href="index.html#contacts">Контакты</a>
+            </nav>
+            <div class="header-right">
+                <a href="index.html" class="btn-login">На главную</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container"><h1>Блог</h1></div>
+    </section>
+
+    <section class="page-content">
+        <div class="blog-grid">
+            <div class="blog-card">
+                <div class="blog-img">🔧</div>
+                <div class="blog-body">
+                    <div class="blog-date">25 мая 2026</div>
+                    <span class="blog-tag">Советы</span>
+                    <h3>Как правильно выбрать тормозные колодки</h3>
+                    <p>Рассказываем, на какие параметры обращать внимание при выборе тормозных колодок для вашего автомобиля...</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img">🛞</div>
+                <div class="blog-body">
+                    <div class="blog-date">18 мая 2026</div>
+                    <span class="blog-tag">Обзор</span>
+                    <h3>Обзор амортизаторов KYB vs Sachs</h3>
+                    <p>Сравниваем два популярных бренда амортизаторов: какой лучше подходит для городской езды...</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img">⚙️</div>
+                <div class="blog-body">
+                    <div class="blog-date">12 мая 2026</div>
+                    <span class="blog-tag">Ремонт</span>
+                    <h3>Замена ремня ГРМ своими руками</h3>
+                    <p>Пошаговая инструкция по замене ремня ГРМ. Инструменты, порядок работ, моменты затяжки...</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img">💡</div>
+                <div class="blog-body">
+                    <div class="blog-date">5 мая 2026</div>
+                    <span class="blog-tag">Советы</span>
+                    <h3>Как продлить жизнь аккумулятору</h3>
+                    <p>Простые правила ухода за аккумулятором, которые помогут избежать проблем с запуском двигателя...</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img">🌀</div>
+                <div class="blog-body">
+                    <div class="blog-date">28 апреля 2026</div>
+                    <span class="blog-tag">Обзор</span>
+                    <h3>Лучшие воздушные фильтры 2026</h3>
+                    <p>Тест-драйв воздушных фильтров от Bosch, Mann-Filter и K&N. Кто победил?</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-img">🚗</div>
+                <div class="blog-body">
+                    <div class="blog-date">20 апреля 2026</div>
+                    <span class="blog-tag">Новости</span>
+                    <h3>Открытие нового магазина в Казани</h3>
+                    <p>Мы рады сообщить об открытии нового магазина АвтоМастер в Казани на ул. Баумана, 46...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 АвтоМастер. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

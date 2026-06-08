@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гарантия - АвтоМастер</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 60px 0; text-align: center; }
+        .page-header h1 { font-size: 36px; }
+        .page-content { max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+        .page-content h2 { font-size: 28px; color: #1a1a2e; margin: 30px 0 15px; }
+        .page-content p { font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 15px; }
+        .warranty-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; margin: 30px 0; }
+        .warranty-step { background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center; }
+        .warranty-step .number { width: 50px; height: 50px; background: #e94560; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin: 0 auto 15px; }
+        .warranty-step h3 { font-size: 16px; color: #1a1a2e; margin-bottom: 10px; }
+        .warranty-step p { font-size: 14px; color: #666; }
+        .warranty-notice { background: #fff3cd; border: 1px solid #ffc107; padding: 20px; border-radius: 8px; margin: 30px 0; }
+        .warranty-notice h3 { color: #856404; margin-bottom: 10px; }
+        .warranty-notice p { color: #856404; margin: 0; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo"><span class="logo-icon">🔧</span><span class="logo-text">АвтоМастер</span></div>
+            <nav class="nav">
+                <a href="index.html#catalog">Каталог</a>
+                <a href="index.html#brands">Бренды</a>
+                <a href="index.html#delivery">Доставка</a>
+                <a href="index.html#reviews">Отзывы</a>
+                <a href="index.html#contacts">Контакты</a>
+            </nav>
+            <div class="header-right">
+                <a href="index.html" class="btn-login">На главную</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container"><h1>Гарантия и возврат</h1></div>
+    </section>
+
+    <section class="page-content">
+        <h2>Гарантия на товары</h2>
+        <p>Все товары, приобретённые в магазинах АвтоМастер, имеют гарантию от производителя. Срок гарантии указывается в товарном чеке и составляет от 6 месяцев до 3 лет в зависимости от категории товара.</p>
+
+        <h2>Как оформить возврат</h2>
+        <div class="warranty-steps">
+            <div class="warranty-step">
+                <div class="number">1</div>
+                <h3>Свяжитесь с нами</h3>
+                <p>Позвоните по телефону +7 (800) 555-35-35 или напишите на info@avtomaster.ru</p>
+            </div>
+            <div class="warranty-step">
+                <div class="number">2</div>
+                <h3>Оформите заявку</h3>
+                <p>Назовите номер заказа и причину возвата. Мы примем заявку в работу.</p>
+            </div>
+            <div class="warranty-step">
+                <div class="number">3</div>
+                <h3>Сдайте товар</h3>
+                <p>Принесите товар в ближайший магазин или передайте курьеру при доставке.</p>
+            </div>
+            <div class="warranty-step">
+                <div class="number">4</div>
+                <h3>Получите деньги</h3>
+                <p>Возврат средств в течение 3-10 рабочих дней на вашу карту или в кассе.</p>
+            </div>
+        </div>
+
+        <h2>Условия возврата</h2>
+        <p><strong>Возврат в течение 14 дней:</strong> Товар можно вернуть без объяснения причин, если он не был в употреблении, сохранены упаковка и товарный вид.</p>
+        <p><strong>Гарантийный случай:</strong> Если товар сломался в течение гарантийного срока, мы заменим его или вернём деньги.</p>
+        <p><strong>Обмен:</strong> Возможен обмен товара на аналогичный другой марки или модели с перерасчётом стоимости.</p>
+
+        <div class="warranty-notice">
+            <h3>⚠️ Обратите внимание</h3>
+            <p>Для гарантийного возврата необходим товарный чек или электронный чек из SMS/email. Храните чек до окончания гарантийного срока.</p>
+        </div>
+
+        <h2>Контакты по гарантии</h2>
+        <p>Телефон: <strong>+7 (800) 555-35-35</strong> (бесплатно по России)</p>
+        <p>Email: <strong>warranty@avtomaster.ru</strong></p>
+        <p>Режим работы: Пн-Пт 9:00-20:00, Сб-Вс 10:00-18:00</p>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 АвтоМастер. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
